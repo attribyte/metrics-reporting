@@ -105,20 +105,26 @@
         <delete dir="${doc}/javadoc"/>
     </target>
 
-    <target name="javadoc">
+    <target name="mvn-dist" depends="dist">
         <javadoc
                 access="public"
-                destdir="${doc}/javadoc"
+                destdir="${dist}/doc/javadoc"
                 author="true"
                 version="true"
-                linksource="false"
                 use="true"
                 windowtitle="org.attribyte"
-                sourcepath="../http-model/src/main/java;../shared-base/src/main/java;../acp/src/main/java"
                 >
             <fileset dir="${src}/main/java" defaultexcludes="yes">
                 <include name="**/*.java"/>
             </fileset>
         </javadoc>
+        <jar jarfile="${javadoc-jar}">
+            <fileset dir="${dist}/doc" />
+        </jar>
+        <jar jarfile="${sources-jar}">
+            <fileset dir="${src}/main/java" defaultexcludes="yes">
+                <include name="**/*.java"/>
+            </fileset>
+        </jar>
     </target>
 </project>

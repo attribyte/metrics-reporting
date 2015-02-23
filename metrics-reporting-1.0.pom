@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.attribyte</groupId>
-    <artifactId>acp</artifactId>
+    <artifactId>metrics-reporting</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>Attribyte Metrics Reporting</name>
     <description>
         Runtime configuration of various metrics reporters.
     </description>
-    <url>https://www.attribyte.org/oss#acp</url>
+    <url>https://github.com/attribyte/metrics-reporting</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.attribyte</groupId>
             <artifactId>attribyte-shared-base</artifactId>
-            <version>1.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
