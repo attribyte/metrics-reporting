@@ -19,13 +19,11 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
-import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricRegistryListener;
 import com.codahale.metrics.Timer;
 import org.attribyte.util.InitUtil;
 
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -42,17 +40,10 @@ public class RegistryTranslation {
 
    public static MetricRegistry translate(final Properties props, final MetricRegistry registry) {
 
-      final Map<String, Metric> metrics = registry.getMetrics();
       final MetricRegistry translateRegistry = new MetricRegistry();
       final Properties kvProps = new InitUtil(TRANSLATE_PREFIX, props, false).getProperties();
-      for(String name : kvProps.stringPropertyNames()) {
-         String translateName = kvProps.getProperty(name);
-         Metric metric = metrics.get(name);
-         if(metric != null) {
-            translateRegistry.remove(translateName);
-            translateRegistry.register(translateName, metric);
-         }
-      }
+
+      //When this listener is added, it is notified of all existing metrics.
 
       registry.addListener(new MetricRegistryListener() {
          @Override
