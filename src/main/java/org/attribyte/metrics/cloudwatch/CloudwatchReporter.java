@@ -16,6 +16,7 @@
 package org.attribyte.metrics.cloudwatch;
 
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClient;
 import com.blacklocus.metrics.CloudWatchReporter;
 import com.codahale.metrics.MetricFilter;
@@ -67,6 +68,11 @@ public class CloudwatchReporter extends ReporterBase implements Reporter {
     */
    public static final String DISABLE_TRANSLATE_PROPERTY = "disableTranslate";
 
+   /**
+    * Should an instance profile be used?
+    */
+   public static final String USE_INSTANCE_CREDENTIALS_PROPERTY = "useInstanceCredentials";
+
    @Override
    public void init(final String name,
                     final Properties _props, final MetricRegistry registry,
@@ -74,17 +80,23 @@ public class CloudwatchReporter extends ReporterBase implements Reporter {
       if(isInit.compareAndSet(false, true)) {
          init(name, _props);
 
-         String awsKeyId = init.getProperty(AWS_ACCESS_KEY_ID_PROPERTY, "");
-         if(awsKeyId.isEmpty()) {
-            init.throwRequiredException(AWS_ACCESS_KEY_ID_PROPERTY);
-         }
+         boolean useInstanceCredentials = init.getProperty(USE_INSTANCE_CREDENTIALS_PROPERTY, "false").equalsIgnoreCase("true");
 
-         String awsKeySecret = init.getProperty(AWS_ACCESS_KEY_SECRET_PROPERTY, "");
-         if(awsKeySecret.isEmpty()) {
-            init.throwRequiredException(AWS_ACCESS_KEY_SECRET_PROPERTY);
-         }
+         if(useInstanceCredentials) {
+            client = new AmazonCloudWatchAsyncClient(new InstanceProfileCredentialsProvider());
+         } else {
+            String awsKeyId = init.getProperty(AWS_ACCESS_KEY_ID_PROPERTY, "");
+            if(awsKeyId.isEmpty()) {
+               init.throwRequiredException(AWS_ACCESS_KEY_ID_PROPERTY);
+            }
 
-         client = new AmazonCloudWatchAsyncClient(new BasicAWSCredentials(awsKeyId, awsKeySecret));
+            String awsKeySecret = init.getProperty(AWS_ACCESS_KEY_SECRET_PROPERTY, "");
+            if(awsKeySecret.isEmpty()) {
+               init.throwRequiredException(AWS_ACCESS_KEY_SECRET_PROPERTY);
+            }
+
+            client = new AmazonCloudWatchAsyncClient(new BasicAWSCredentials(awsKeyId, awsKeySecret));
+         }
 
          String cloudwatchNamespace = init.getProperty(METRIC_NAMESPACE_PROPERTY, null);
 
