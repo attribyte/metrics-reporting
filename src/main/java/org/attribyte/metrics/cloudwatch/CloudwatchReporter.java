@@ -16,6 +16,7 @@
 package org.attribyte.metrics.cloudwatch;
 
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClient;
 import com.blacklocus.metrics.CloudWatchReporter;
@@ -73,6 +74,11 @@ public class CloudwatchReporter extends ReporterBase implements Reporter {
     */
    public static final String USE_INSTANCE_CREDENTIALS_PROPERTY = "useInstanceCredentials";
 
+   /**
+    * Should the default provider chain be used?
+    */
+   public static final String USE_DEFAULT_PROVIDER_CHAIN_PROPERTY = "useDefaultProviderChain";
+
    @Override
    public void init(final String name,
                     final Properties _props, final MetricRegistry registry,
@@ -81,8 +87,11 @@ public class CloudwatchReporter extends ReporterBase implements Reporter {
          init(name, _props);
 
          boolean useInstanceCredentials = init.getProperty(USE_INSTANCE_CREDENTIALS_PROPERTY, "false").equalsIgnoreCase("true");
+         boolean useDefaultProviderChain = init.getProperty(USE_DEFAULT_PROVIDER_CHAIN_PROPERTY, "false").equalsIgnoreCase("true");
 
-         if(useInstanceCredentials) {
+         if(useDefaultProviderChain) {
+            client = new AmazonCloudWatchAsyncClient(new DefaultAWSCredentialsProviderChain());
+         } else if(useInstanceCredentials) {
             client = new AmazonCloudWatchAsyncClient(new InstanceProfileCredentialsProvider());
          } else {
             String awsKeyId = init.getProperty(AWS_ACCESS_KEY_ID_PROPERTY, "");
