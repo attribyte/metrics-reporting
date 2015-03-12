@@ -36,6 +36,20 @@ public class Reporting {
     * @param prefix The prefix applied to property names.
     * @param props The properties.
     * @param registry The metrics registry.
+    * @throws Exception on initialization error.
+    */
+   public Reporting(final String prefix, final Properties props,
+                    final MetricRegistry registry) throws Exception {
+      this(prefix, props, registry, null);
+   }
+
+
+   /**
+    * Creates an instance that creates and configures metrics reporters with
+    * filtering applied to the registry.
+    * @param prefix The prefix applied to property names.
+    * @param props The properties.
+    * @param registry The metrics registry.
     * @param filter A metrics filter. May be <code>null</code>.
     * @throws Exception on initialization error.
     */
