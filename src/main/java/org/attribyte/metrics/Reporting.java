@@ -15,8 +15,10 @@
 
 package org.attribyte.metrics;
 
+import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricSet;
 import com.google.common.collect.Lists;
 import org.attribyte.api.InitializationException;
 import org.attribyte.util.InitUtil;
@@ -29,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Manages the configuration and lifecycle of metrics reporters.
  */
-public class Reporting {
+public class Reporting implements MetricSet {
 
    /**
     * Creates an instance that creates and configures metrics reporters.
@@ -65,6 +67,10 @@ public class Reporting {
          if(reporter != null) {
             reporter.init(name, reporterInit.getProperties(), registry, filter);
             reporters.add(reporter);
+            Map<String, Metric> metrics = reporter.getMetrics();
+            if(metrics != null && metrics.size() > 0) {
+               this.metrics.put(reporter.getName(), reporter);
+            }
          } else {
             throw new InitializationException("The 'class' must be specified for metrics reporter, '" + name + "'");
          }
@@ -99,6 +105,16 @@ public class Reporting {
          }
       }
    }
+
+   @Override
+   public Map<String, Metric> getMetrics() {
+      return metrics;
+   }
+
+   /**
+    * Individual reporter metrics.
+    */
+   private Map<String, Metric> metrics;
 
    /**
     * Is reporting running?

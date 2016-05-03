@@ -20,14 +20,17 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClient;
 import com.blacklocus.metrics.CloudWatchReporter;
+import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.collect.ImmutableMap;
 import org.attribyte.api.InitializationException;
 import org.attribyte.metrics.RegistryTranslation;
 import org.attribyte.metrics.Reporter;
 import org.attribyte.metrics.ReporterBase;
 import org.attribyte.util.InitUtil;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -138,6 +141,11 @@ public class CloudwatchReporter extends ReporterBase implements Reporter {
          reporter.stop();
          client.shutdown();
       }
+   }
+
+   @Override
+   public Map<String, Metric> getMetrics() {
+      return ImmutableMap.of();
    }
 
    private CloudWatchReporter reporter;

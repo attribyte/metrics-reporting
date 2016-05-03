@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Attribyte, LLC
+ * Copyright 2015, 2016 Attribyte, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 package org.attribyte.metrics.essem;
 
+import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import org.attribyte.api.InitializationException;
@@ -23,6 +24,7 @@ import org.attribyte.metrics.ReporterBase;
 import org.attribyte.util.InitUtil;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,6 +67,11 @@ public class EssemReporter extends ReporterBase implements Reporter {
     */
    public static final String REPORT_DEFLATE_PROPERTY = "deflate";
 
+   /**
+    * Should unchanged metrics (since last report) be skipped ('skipUnchanged'). Default 'false'.
+    */
+   public static final String SKIP_UNCHANGED__PROPERTY = "skipUnchanged";
+
    @Override
    public void init(final String name,
                     final Properties _props, final MetricRegistry registry,
@@ -97,6 +104,7 @@ public class EssemReporter extends ReporterBase implements Reporter {
 
          builder.convertDurationsTo(TimeUnit.valueOf(init.getProperty(DURATION_UNIT_PROPERTY, "MILLISECONDS").toUpperCase()));
          builder.convertRatesTo(TimeUnit.valueOf(init.getProperty(RATE_UNIT_PROPERTY, "SECONDS").toUpperCase()));
+         builder.skipUnchangedMetrics(init.getProperty(SKIP_UNCHANGED__PROPERTY, "false").equalsIgnoreCase("true"));
 
          reporter = builder.build();
          frequencyMillis = InitUtil.millisFromTime(init.getProperty(FREQUENCY_PROPERTY, "1m"));
@@ -118,6 +126,11 @@ public class EssemReporter extends ReporterBase implements Reporter {
       if(isRunning.compareAndSet(true, false)) {
          this.reporter.stop();
       }
+   }
+
+   @Override
+   public final Map<String, Metric> getMetrics() {
+      return reporter.getMetrics();
    }
 
    private org.attribyte.essem.reporter.EssemReporter reporter;

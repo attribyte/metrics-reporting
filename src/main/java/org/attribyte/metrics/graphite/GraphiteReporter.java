@@ -15,20 +15,23 @@
 
 package org.attribyte.metrics.graphite;
 
+import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.graphite.Graphite;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import org.attribyte.api.InitializationException;
 import org.attribyte.metrics.Reporter;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.attribyte.metrics.ReporterBase;
 import org.attribyte.util.InitUtil;
-import org.attribyte.util.StringUtil;
 
 public class GraphiteReporter extends ReporterBase implements Reporter {
 
@@ -72,7 +75,7 @@ public class GraphiteReporter extends ReporterBase implements Reporter {
             builder.filter(filter);
          }
 
-         if(StringUtil.hasContent(graphitePrefix)) {
+         if(!Strings.isNullOrEmpty(graphitePrefix)) {
             builder.prefixedWith(graphitePrefix);
          }
 
@@ -98,6 +101,11 @@ public class GraphiteReporter extends ReporterBase implements Reporter {
       if(isRunning.compareAndSet(true, false)) {
          this.reporter.stop();
       }
+   }
+
+   @Override
+   public Map<String, Metric> getMetrics() {
+      return ImmutableMap.of();
    }
 
    private com.codahale.metrics.graphite.GraphiteReporter reporter;

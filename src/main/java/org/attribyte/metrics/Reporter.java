@@ -17,10 +17,11 @@ package org.attribyte.metrics;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricSet;
 
 import java.util.Properties;
 
-public interface Reporter {
+public interface Reporter extends MetricSet {
 
    /**
     * Initialize a reporter instance.

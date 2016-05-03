@@ -10,7 +10,7 @@
 
     <property name="groupId" value="org.attribyte" />
     <property name="artifactId" value="metrics-reporting" />
-    <property name="version" value="1.0.1" />
+    <property name="version" value="1.0.2" />
 
     <property name="jar" value="${dist}/lib/${artifactId}-${version}.jar" />
     <property name="javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
@@ -44,6 +44,7 @@
         <fileset refid="ivy.graphite-fileset"/>
         <fileset refid="ivy.cloudwatch-fileset"/>
         <fileset refid="ivy.essem-fileset"/>
+        <fileset refid="ivy.newrelic-fileset"/>
         <pathelement location="${build}"/>
     </path>
 
@@ -53,6 +54,7 @@
         <ivy:cachefileset setid="ivy.graphite-fileset" conf="graphite-runtime"/>
         <ivy:cachefileset setid="ivy.cloudwatch-fileset" conf="cloudwatch-runtime"/>
         <ivy:cachefileset setid="ivy.essem-fileset" conf="essem-runtime"/>
+        <ivy:cachefileset setid="ivy.newrelic-fileset" conf="newrelic-runtime"/>
     </target>
 
     <target name="init" depends="resolve">
@@ -81,18 +83,23 @@
     </target>
 
     <target name="graphite-dist" depends="dist" description="Creates the distribution dependencies for Graphite">
-        <ivy:retrieve pattern="${dist}/extlib/[conf]/[organisation]-[artifact]-[revision].[ext]"
+        <ivy:retrieve pattern="${dist}/[conf]/extlib/[organisation]-[artifact]-[revision].[ext]"
                       conf="graphite-runtime"/>
     </target>
 
     <target name="cloudwatch-dist" depends="dist" description="Creates the distribution dependencies for CloudWatch">
-        <ivy:retrieve pattern="${dist}/extlib/[conf]/[organisation]-[artifact]-[revision].[ext]"
+        <ivy:retrieve pattern="${dist}/[conf]/extlib/[organisation]-[artifact]-[revision].[ext]"
                       conf="cloudwatch-runtime"/>
     </target>
 
     <target name="essem-dist" depends="dist" description="Creates the distribution dependencies for Essem">
-        <ivy:retrieve pattern="${dist}/extlib/[conf]/[organisation]-[artifact]-[revision].[ext]"
+        <ivy:retrieve pattern="${dist}/[conf]/extlib/[organisation]-[artifact]-[revision].[ext]"
                       conf="essem-runtime"/>
+    </target>
+
+    <target name="newrelic-dist" depends="dist" description="Creates the distribution dependencies for New Relic">
+        <ivy:retrieve pattern="${dist}/[conf]/extlib/[organisation]-[artifact]-[revision].[ext]"
+                      conf="newrelic-runtime"/>
     </target>
 
     <target name="clean" description="Removes all build files">
