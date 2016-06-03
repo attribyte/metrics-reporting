@@ -79,6 +79,7 @@ public class Reporting implements MetricSet {
 
    /**
     * Starts all reporters.
+    * @return The number of configured reporters.
     * @throws Exception on start error.
     */
    public int start() throws Exception {
@@ -118,6 +119,7 @@ public class Reporting implements MetricSet {
 
    /**
     * Is reporting running?
+    * @return Is reporting started?
     */
    public boolean isRunning() {
       return isStarted.get();

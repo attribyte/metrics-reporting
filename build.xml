@@ -1,4 +1,4 @@
-<project name="pubsubhub" default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="metrics-reporting" default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <description>Builds the Attribyte, LLC metrics-reporting project</description>
 
@@ -10,7 +10,7 @@
 
     <property name="groupId" value="org.attribyte" />
     <property name="artifactId" value="metrics-reporting" />
-    <property name="version" value="1.0.2" />
+    <property name="version" value="1.0.3" />
 
     <property name="jar" value="${dist}/lib/${artifactId}-${version}.jar" />
     <property name="javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
@@ -102,6 +102,9 @@
                       conf="newrelic-runtime"/>
     </target>
 
+    <target name="full-dist" depends="base-dist,graphite-dist,cloudwatch-dist,essem-dist,newrelic-dist" description="Creates the distribution dependencies for all">
+    </target>
+
     <target name="clean" description="Removes all build files">
         <delete dir="${build}"/>
         <delete dir="${build-test}"/>
@@ -121,6 +124,7 @@
                 use="true"
                 windowtitle="org.attribyte"
                 >
+            <classpath refid="classpath"/>
             <fileset dir="${src}/main/java" defaultexcludes="yes">
                 <include name="**/*.java"/>
             </fileset>
