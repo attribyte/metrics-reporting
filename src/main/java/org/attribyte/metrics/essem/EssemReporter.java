@@ -72,6 +72,14 @@ public class EssemReporter extends ReporterBase implements Reporter {
     */
    public static final String SKIP_UNCHANGED__PROPERTY = "skipUnchanged";
 
+   /**
+    * Identifies the HDR histogram/timer report mode ('none', 'total', 'snapshot').
+    * <p>
+    *    Default is 'snapshot'.
+    * </p>
+    */
+   public static final String HDR_REPORT_PROPERTY = "hdrReport";
+
    @Override
    public void init(final String name,
                     final Properties _props, final MetricRegistry registry,
@@ -105,6 +113,22 @@ public class EssemReporter extends ReporterBase implements Reporter {
          builder.convertDurationsTo(TimeUnit.valueOf(init.getProperty(DURATION_UNIT_PROPERTY, "MILLISECONDS").toUpperCase()));
          builder.convertRatesTo(TimeUnit.valueOf(init.getProperty(RATE_UNIT_PROPERTY, "SECONDS").toUpperCase()));
          builder.skipUnchangedMetrics(init.getProperty(SKIP_UNCHANGED__PROPERTY, "false").equalsIgnoreCase("true"));
+
+         String hdrMode = init.getProperty(HDR_REPORT_PROPERTY, "snapshot");
+         switch(hdrMode.toLowerCase()) {
+            case "snapshot":
+               builder.setHdrReport(org.attribyte.essem.reporter.EssemReporter.HdrReport.SNAPSHOT);
+               break;
+            case "total":
+               builder.setHdrReport(org.attribyte.essem.reporter.EssemReporter.HdrReport.TOTAL);
+               break;
+            case "none":
+               builder.setHdrReport(org.attribyte.essem.reporter.EssemReporter.HdrReport.NONE);
+               break;
+            default:
+               builder.setHdrReport(org.attribyte.essem.reporter.EssemReporter.HdrReport.SNAPSHOT);
+               break;
+         }
 
          reporter = builder.build();
          frequencyMillis = InitUtil.millisFromTime(init.getProperty(FREQUENCY_PROPERTY, "1m"));
