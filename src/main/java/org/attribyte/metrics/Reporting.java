@@ -19,6 +19,7 @@ import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.attribyte.api.InitializationException;
 import org.attribyte.util.InitUtil;
@@ -59,6 +60,7 @@ public class Reporting implements MetricSet {
                     final MetricRegistry registry, final MetricFilter filter) throws Exception {
 
       Map<String, Properties> reporterProperties = new InitUtil(prefix, props, false).split();
+      ImmutableMap.Builder<String, Metric> reporterMetrics = ImmutableMap.builder();
 
       for(String name : reporterProperties.keySet()) {
          Properties currProps = reporterProperties.get(name);
@@ -69,12 +71,13 @@ public class Reporting implements MetricSet {
             reporters.add(reporter);
             Map<String, Metric> metrics = reporter.getMetrics();
             if(metrics != null && metrics.size() > 0) {
-               this.metrics.put(reporter.getName(), reporter);
+               reporterMetrics.put(reporter.getName(), reporter);
             }
          } else {
             throw new InitializationException("The 'class' must be specified for metrics reporter, '" + name + "'");
          }
       }
+      this.metrics = reporterMetrics.build();
    }
 
    /**
@@ -115,7 +118,7 @@ public class Reporting implements MetricSet {
    /**
     * Individual reporter metrics.
     */
-   private Map<String, Metric> metrics;
+   private final ImmutableMap<String, Metric> metrics;
 
    /**
     * Is reporting running?
@@ -125,11 +128,10 @@ public class Reporting implements MetricSet {
       return isStarted.get();
    }
 
-
    /**
     * All initialized reporters.
     */
-   private List<Reporter> reporters = Lists.newArrayListWithExpectedSize(8);
+   private final List<Reporter> reporters = Lists.newArrayListWithExpectedSize(8);
 
    /**
     * Ensure started once.
