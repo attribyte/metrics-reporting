@@ -19,6 +19,8 @@ import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import org.attribyte.api.InitializationException;
+import org.attribyte.essem.reporter.Proto2Builder;
+import org.attribyte.essem.reporter.Proto2Reporter;
 import org.attribyte.metrics.Reporter;
 import org.attribyte.metrics.ReporterBase;
 import org.attribyte.util.InitUtil;
@@ -91,8 +93,8 @@ public class EssemReporter extends ReporterBase implements Reporter {
          }
 
          URI uri = new URI(init.getProperty(SERVER_URL_PROPERTY));
-         org.attribyte.essem.reporter.EssemReporter.Builder builder =
-                 org.attribyte.essem.reporter.EssemReporter.newBuilder(uri, registry);
+         Proto2Builder builder =
+                 Proto2Reporter.newBuilder(uri, registry);
 
          if(filter != null) {
             builder.filter(filter);
